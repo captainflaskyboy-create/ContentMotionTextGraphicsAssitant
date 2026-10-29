@@ -1,0 +1,545 @@
+{
+  "$defs": {
+    "Alignment": {
+      "enum": [
+        "left",
+        "center",
+        "right"
+      ],
+      "type": "string"
+    },
+    "Canvas": {
+      "additionalProperties": false,
+      "properties": {
+        "background": {
+          "default": "#00FF00",
+          "type": "string"
+        },
+        "bitrate_kbps": {
+          "default": 20000,
+          "format": "uint32",
+          "maximum": 150000,
+          "minimum": 1000,
+          "type": "integer"
+        },
+        "fps": {
+          "$ref": "#/$defs/FrameRate",
+          "default": {
+            "denominator": 1,
+            "numerator": 30
+          }
+        },
+        "height": {
+          "default": 1080,
+          "format": "uint32",
+          "maximum": 2160,
+          "minimum": 64,
+          "type": "integer"
+        },
+        "width": {
+          "default": 1920,
+          "format": "uint32",
+          "maximum": 3840,
+          "minimum": 64,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "Content": {
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "align": {
+              "$ref": "#/$defs/Alignment",
+              "default": "left"
+            },
+            "color": {
+              "default": "white",
+              "type": "string"
+            },
+            "cursor": {
+              "default": false,
+              "type": "boolean"
+            },
+            "font": {
+              "default": "heading",
+              "type": "string"
+            },
+            "font_size": {
+              "default": 80.0,
+              "format": "float",
+              "type": "number"
+            },
+            "min_font_size": {
+              "default": 24.0,
+              "format": "float",
+              "type": "number"
+            },
+            "padding": {
+              "default": 0.0,
+              "format": "float",
+              "type": "number"
+            },
+            "scroll_lines": {
+              "default": 0,
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "text": {
+              "type": "string"
+            },
+            "type": {
+              "const": "text",
+              "type": "string"
+            },
+            "typing_seconds": {
+              "default": 0.0,
+              "format": "double",
+              "type": "number"
+            },
+            "wrap": {
+              "default": true,
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "text"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "color": {
+              "type": "string"
+            },
+            "radius": {
+              "default": 0.0,
+              "format": "float",
+              "type": "number"
+            },
+            "stroke": {
+              "default": null,
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "stroke_width": {
+              "default": 0.0,
+              "format": "float",
+              "type": "number"
+            },
+            "type": {
+              "const": "rectangle",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "color"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "color": {
+              "type": "string"
+            },
+            "thickness": {
+              "default": 4.0,
+              "format": "float",
+              "type": "number"
+            },
+            "type": {
+              "const": "line",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "color"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "type": {
+              "const": "image",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "path"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "color": {
+              "default": "yellow",
+              "type": "string"
+            },
+            "count_seconds": {
+              "default": 1.0,
+              "format": "double",
+              "type": "number"
+            },
+            "decimals": {
+              "default": 0,
+              "format": "uint32",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "font_size": {
+              "default": 80.0,
+              "format": "float",
+              "type": "number"
+            },
+            "from": {
+              "format": "double",
+              "type": "number"
+            },
+            "suffix": {
+              "default": "",
+              "type": "string"
+            },
+            "to": {
+              "format": "double",
+              "type": "number"
+            },
+            "type": {
+              "const": "counter",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "from",
+            "to"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "color": {
+              "default": "yellow",
+              "type": "string"
+            },
+            "easing": {
+              "$ref": "#/$defs/Easing",
+              "default": "linear"
+            },
+            "fill_seconds": {
+              "default": 1.0,
+              "format": "double",
+              "type": "number"
+            },
+            "from": {
+              "default": 0.0,
+              "format": "float",
+              "type": "number"
+            },
+            "to": {
+              "default": 1.0,
+              "format": "float",
+              "type": "number"
+            },
+            "track": {
+              "default": "panel",
+              "type": "string"
+            },
+            "type": {
+              "const": "progress",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Easing": {
+      "enum": [
+        "linear",
+        "out_cubic",
+        "in_out_cubic",
+        "out_back"
+      ],
+      "type": "string"
+    },
+    "FrameRate": {
+      "additionalProperties": false,
+      "properties": {
+        "denominator": {
+          "default": 1,
+          "format": "uint32",
+          "maximum": 10000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "numerator": {
+          "default": 30,
+          "format": "uint32",
+          "maximum": 120000,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "Layer": {
+      "additionalProperties": false,
+      "properties": {
+        "content": {
+          "$ref": "#/$defs/Content"
+        },
+        "duration": {
+          "format": "double",
+          "type": "number"
+        },
+        "height": {
+          "format": "float",
+          "type": "number"
+        },
+        "id": {
+          "type": "string"
+        },
+        "motion": {
+          "$ref": "#/$defs/Motion",
+          "default": {
+            "easing": "out_cubic",
+            "entrance": 0.22,
+            "exit": 0.15,
+            "from_scale": 1.0,
+            "from_x": 0.0,
+            "from_y": 28.0,
+            "glitch": 0.0,
+            "opacity": 1.0,
+            "reveal": false,
+            "to_x": 0.0,
+            "to_y": -12.0
+          }
+        },
+        "start": {
+          "format": "double",
+          "type": "number"
+        },
+        "width": {
+          "format": "float",
+          "type": "number"
+        },
+        "x": {
+          "format": "float",
+          "type": "number"
+        },
+        "y": {
+          "format": "float",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "start",
+        "duration",
+        "x",
+        "y",
+        "width",
+        "height",
+        "content"
+      ],
+      "type": "object"
+    },
+    "Motion": {
+      "additionalProperties": false,
+      "properties": {
+        "easing": {
+          "$ref": "#/$defs/Easing",
+          "default": "out_cubic"
+        },
+        "entrance": {
+          "default": 0.22,
+          "format": "double",
+          "type": "number"
+        },
+        "exit": {
+          "default": 0.15,
+          "format": "double",
+          "type": "number"
+        },
+        "from_scale": {
+          "default": 1.0,
+          "format": "float",
+          "type": "number"
+        },
+        "from_x": {
+          "default": 0.0,
+          "format": "float",
+          "type": "number"
+        },
+        "from_y": {
+          "default": 28.0,
+          "format": "float",
+          "type": "number"
+        },
+        "glitch": {
+          "default": 0.0,
+          "format": "float",
+          "type": "number"
+        },
+        "opacity": {
+          "default": 1.0,
+          "format": "float",
+          "type": "number"
+        },
+        "reveal": {
+          "default": false,
+          "type": "boolean"
+        },
+        "to_x": {
+          "default": 0.0,
+          "format": "float",
+          "type": "number"
+        },
+        "to_y": {
+          "default": -12.0,
+          "format": "float",
+          "type": "number"
+        }
+      },
+      "type": "object"
+    },
+    "Theme": {
+      "additionalProperties": false,
+      "properties": {
+        "body_font": {
+          "default": "Segoe UI",
+          "type": "string"
+        },
+        "entrance": {
+          "default": 0.22,
+          "format": "double",
+          "type": "number"
+        },
+        "exit": {
+          "default": 0.15,
+          "format": "double",
+          "type": "number"
+        },
+        "heading_font": {
+          "default": "Arial Black",
+          "type": "string"
+        },
+        "mono_font": {
+          "default": "Consolas",
+          "type": "string"
+        },
+        "muted": {
+          "default": "#9B9BA8",
+          "type": "string"
+        },
+        "outline": {
+          "default": "#09090D",
+          "type": "string"
+        },
+        "outline_width": {
+          "default": 2.0,
+          "format": "float",
+          "type": "number"
+        },
+        "panel": {
+          "default": "#15151D",
+          "type": "string"
+        },
+        "white": {
+          "default": "#F8F8F2",
+          "type": "string"
+        },
+        "yellow": {
+          "default": "#FFDB3D",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "canvas": {
+      "$ref": "#/$defs/Canvas",
+      "default": {
+        "background": "#00FF00",
+        "bitrate_kbps": 20000,
+        "fps": {
+          "denominator": 1,
+          "numerator": 30
+        },
+        "height": 1080,
+        "width": 1920
+      }
+    },
+    "duration": {
+      "format": "double",
+      "maximum": 600,
+      "type": "number"
+    },
+    "layers": {
+      "items": {
+        "$ref": "#/$defs/Layer"
+      },
+      "maxItems": 512,
+      "minItems": 1,
+      "type": "array"
+    },
+    "seed": {
+      "default": 0,
+      "format": "uint64",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "theme": {
+      "$ref": "#/$defs/Theme",
+      "default": {
+        "body_font": "Segoe UI",
+        "entrance": 0.22,
+        "exit": 0.15,
+        "heading_font": "Arial Black",
+        "mono_font": "Consolas",
+        "muted": "#9B9BA8",
+        "outline": "#09090D",
+        "outline_width": 2.0,
+        "panel": "#15151D",
+        "white": "#F8F8F2",
+        "yellow": "#FFDB3D"
+      }
+    },
+    "version": {
+      "format": "uint32",
+      "maximum": 1,
+      "minimum": 1,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "version",
+    "duration",
+    "layers"
+  ],
+  "title": "Scene",
+  "type": "object"
+}

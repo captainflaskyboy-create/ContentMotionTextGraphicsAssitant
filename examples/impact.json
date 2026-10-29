@@ -1,0 +1,95 @@
+{
+  "canvas": {
+    "background": "#00FF00",
+    "bitrate_kbps": 20000,
+    "fps": {
+      "denominator": 1,
+      "numerator": 30
+    },
+    "height": 1080,
+    "width": 1920
+  },
+  "duration": 3.0,
+  "layers": [
+    {
+      "content": {
+        "color": "panel",
+        "radius": 0.0,
+        "stroke": null,
+        "stroke_width": 0.0,
+        "type": "rectangle"
+      },
+      "duration": 3.0,
+      "height": 370.0,
+      "id": "backing",
+      "motion": {
+        "easing": "out_cubic",
+        "entrance": 0.22,
+        "exit": 0.15,
+        "from_scale": 1.0,
+        "from_x": -100.0,
+        "from_y": 0.0,
+        "glitch": 0.0,
+        "opacity": 1.0,
+        "reveal": true,
+        "to_x": 0.0,
+        "to_y": -12.0
+      },
+      "start": 0.0,
+      "width": 1580.0,
+      "x": 170.0,
+      "y": 350.0
+    },
+    {
+      "content": {
+        "align": "left",
+        "color": "yellow",
+        "cursor": false,
+        "font": "heading",
+        "font_size": 116.0,
+        "min_font_size": 24.0,
+        "padding": 0.0,
+        "scroll_lines": 0,
+        "text": "CHALLENGE ACCEPTED",
+        "type": "text",
+        "typing_seconds": 0.0,
+        "wrap": true
+      },
+      "duration": 2.92,
+      "height": 220.0,
+      "id": "title",
+      "motion": {
+        "easing": "out_back",
+        "entrance": 0.22,
+        "exit": 0.15,
+        "from_scale": 0.7799999713897705,
+        "from_x": -32.0,
+        "from_y": 0.0,
+        "glitch": 3.0,
+        "opacity": 1.0,
+        "reveal": false,
+        "to_x": 0.0,
+        "to_y": -12.0
+      },
+      "start": 0.08,
+      "width": 1460.0,
+      "x": 230.0,
+      "y": 425.0
+    }
+  ],
+  "seed": 42,
+  "theme": {
+    "body_font": "Segoe UI",
+    "entrance": 0.22,
+    "exit": 0.15,
+    "heading_font": "Arial Black",
+    "mono_font": "Consolas",
+    "muted": "#9B9BA8",
+    "outline": "#09090D",
+    "outline_width": 2.0,
+    "panel": "#15151D",
+    "white": "#F8F8F2",
+    "yellow": "#FFDB3D"
+  },
+  "version": 1
+}

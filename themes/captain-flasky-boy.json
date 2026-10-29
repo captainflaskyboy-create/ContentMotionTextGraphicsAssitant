@@ -1,0 +1,13 @@
+{
+  "body_font": "Segoe UI",
+  "entrance": 0.22,
+  "exit": 0.15,
+  "heading_font": "Arial Black",
+  "mono_font": "Consolas",
+  "muted": "#9B9BA8",
+  "outline": "#09090D",
+  "outline_width": 2.0,
+  "panel": "#15151D",
+  "white": "#F8F8F2",
+  "yellow": "#FFDB3D"
+}

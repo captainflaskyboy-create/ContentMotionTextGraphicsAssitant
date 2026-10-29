@@ -1,0 +1,41 @@
+{
+  "toolchain": "Rust 1.99.1, Windows GNU, optimized",
+  "date": "2026-10-29",
+  "measurements": [
+    {
+      "frames": 480,
+      "total_seconds": 3.5680876,
+      "duration": 16.0,
+      "gpu_memory_bytes": null,
+      "mode": "demo",
+      "render_seconds": 2.3526351,
+      "render_fps": 204.02654028242628,
+      "peak_working_set_bytes": 313257984,
+      "file_bytes": 38123721
+    },
+    {
+      "frames": 480,
+      "total_seconds": 5.6520434999999996,
+      "duration": 16.0,
+      "gpu_memory_bytes": null,
+      "mode": "software",
+      "render_seconds": 4.3102307,
+      "render_fps": 111.36294862360847,
+      "peak_working_set_bytes": 322191360,
+      "file_bytes": 3308440
+    },
+    {
+      "frames": 1920,
+      "total_seconds": 12.2397975,
+      "duration": 64.0,
+      "gpu_memory_bytes": null,
+      "mode": "long",
+      "render_seconds": 8.2437596,
+      "render_fps": 232.9034437151709,
+      "peak_working_set_bytes": 314867712,
+      "file_bytes": 158117448
+    }
+  ],
+  "adapter": "Intel Iris Xe",
+  "platform": "Windows x64"
+}

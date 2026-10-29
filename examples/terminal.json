@@ -1,0 +1,131 @@
+{
+  "canvas": {
+    "background": "#00FF00",
+    "bitrate_kbps": 20000,
+    "fps": {
+      "denominator": 1,
+      "numerator": 30
+    },
+    "height": 1080,
+    "width": 1920
+  },
+  "duration": 3.0,
+  "layers": [
+    {
+      "content": {
+        "color": "panel",
+        "radius": 0.0,
+        "stroke": "muted",
+        "stroke_width": 2.0,
+        "type": "rectangle"
+      },
+      "duration": 3.0,
+      "height": 680.0,
+      "id": "terminal-panel",
+      "motion": {
+        "easing": "out_cubic",
+        "entrance": 0.22,
+        "exit": 0.15,
+        "from_scale": 1.0,
+        "from_x": 0.0,
+        "from_y": 0.0,
+        "glitch": 0.0,
+        "opacity": 1.0,
+        "reveal": true,
+        "to_x": 0.0,
+        "to_y": -12.0
+      },
+      "start": 0.0,
+      "width": 1600.0,
+      "x": 160.0,
+      "y": 200.0
+    },
+    {
+      "content": {
+        "align": "left",
+        "color": "yellow",
+        "cursor": false,
+        "font": "heading",
+        "font_size": 30.0,
+        "min_font_size": 24.0,
+        "padding": 0.0,
+        "scroll_lines": 0,
+        "text": "C:\\CHALLENGE> RUN PROTOCOL",
+        "type": "text",
+        "typing_seconds": 0.0,
+        "wrap": true
+      },
+      "duration": 3.0,
+      "height": 60.0,
+      "id": "terminal-header",
+      "motion": {
+        "easing": "out_cubic",
+        "entrance": 0.22,
+        "exit": 0.15,
+        "from_scale": 1.0,
+        "from_x": -32.0,
+        "from_y": 0.0,
+        "glitch": 0.0,
+        "opacity": 1.0,
+        "reveal": false,
+        "to_x": 0.0,
+        "to_y": -12.0
+      },
+      "start": 0.0,
+      "width": 1480.0,
+      "x": 210.0,
+      "y": 235.0
+    },
+    {
+      "content": {
+        "align": "left",
+        "color": "white",
+        "cursor": true,
+        "font": "mono",
+        "font_size": 46.0,
+        "min_font_size": 24.0,
+        "padding": 0.0,
+        "scroll_lines": 3,
+        "text": "> INITIALIZING CHALLENGE\n> MANUAL CREATION ONLY\n> READY_",
+        "type": "text",
+        "typing_seconds": 1.75,
+        "wrap": true
+      },
+      "duration": 2.8,
+      "height": 460.0,
+      "id": "terminal-text",
+      "motion": {
+        "easing": "out_cubic",
+        "entrance": 0.22,
+        "exit": 0.15,
+        "from_scale": 1.0,
+        "from_x": 0.0,
+        "from_y": 0.0,
+        "glitch": 0.0,
+        "opacity": 1.0,
+        "reveal": false,
+        "to_x": 0.0,
+        "to_y": -12.0
+      },
+      "start": 0.2,
+      "width": 1480.0,
+      "x": 210.0,
+      "y": 350.0
+    }
+  ],
+  "seed": 42,
+  "theme": {
+    "body_font": "Segoe UI",
+    "entrance": 0.22,
+    "exit": 0.15,
+    "heading_font": "Arial Black",
+    "mono_font": "Consolas",
+    "muted": "#9B9BA8",
+    "outline": "#09090D",
+    "outline_width": 2.0,
+    "panel": "#15151D",
+    "white": "#F8F8F2",
+    "yellow": "#FFDB3D"
+  },
+  "version": 1
+}
