@@ -4,7 +4,16 @@ Native Windows motion graphics from explicit JSON instructions. Made by **Captai
 
 Create crisp titles, challenge rules, terminal panels, counters, callouts and simple flowcharts over solid green, ready for chroma keying in a video editor. No GUI, server, AI model, browser or FFmpeg runtime dependency. Silent H.264 MP4 is the default output.
 
-[Download the Windows package and finished challenge demo](https://github.com/captainflaskyboy-create/ContentMotionTextGraphicsAssitant/releases/latest).
+[Download Windows builds](https://github.com/captainflaskyboy-create/ContentMotionTextGraphicsAssitant/releases/latest) · [Finished challenge demo](https://github.com/captainflaskyboy-create/ContentMotionTextGraphicsAssitant/releases/download/v0.1.0/challenge-rules.mp4).
+
+For a single-file download, choose [**cmtga.exe**](https://github.com/captainflaskyboy-create/ContentMotionTextGraphicsAssitant/releases/latest/download/cmtga.exe). Save it to a folder and run it from PowerShell. No installation or extraction is required:
+
+```powershell
+.\cmtga.exe doctor
+.\cmtga.exe text --text "CHALLENGE ACCEPTED" --preset impact --duration 3 --output title.mp4
+```
+
+This is a command-line application; run it in a terminal. `cmtga licenses` prints the licence notices embedded in the executable. The ZIP also includes editable examples and documentation.
 
 ![A rendered challenge rule](docs/demo.png)
 

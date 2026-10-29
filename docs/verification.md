@@ -1,5 +1,11 @@
 # Verification — 29 October 2026
 
+## Standalone release v0.1.1
+
+The release now includes a direct `cmtga.exe` download, with the project and third-party licence notices embedded behind `cmtga licenses`. The executable is 1,405,440 bytes in the locally verified Windows GNU build. It was copied alone into a separate directory and exercised with an empty process PATH: doctor succeeded, embedded notices were accessible, and an actual 30-frame MP4 rendered and decoded successfully. No companion files were needed. A binary scan found no embedded local profile path.
+
+Formatting, Clippy, sixteen regular tests and three explicit native integration tests passed for this update. These checks include a regression test reading the embedded notices from a working directory outside the project. The v0.1.0 rendering measurements below remain the original benchmark results.
+
 Verified locally on Windows x64 using Rust 1.99.1, the Windows GNU toolchain and an Intel Iris Xe graphics adapter. MSVC builds are configured in Windows CI; local MSVC execution was not performed.
 
 ## Checks completed

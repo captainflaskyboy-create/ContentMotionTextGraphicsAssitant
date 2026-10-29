@@ -2,6 +2,23 @@
 use serde_json::{json, Value};
 use std::process::Command;
 #[test]
+fn standalone_licenses_are_embedded() {
+    let output = Command::new(env!("CARGO_BIN_EXE_cmtga"))
+        .arg("licenses")
+        .current_dir(std::env::temp_dir())
+        .output()
+        .unwrap();
+    assert!(output.status.success());
+    let result: Value = serde_json::from_slice(&output.stdout).unwrap();
+    let notices = result["licenses"].as_str().unwrap();
+    assert!(notices.contains("Copyright (c) 2026 Captain Flasky Boy"));
+    assert!(notices.contains("AIContentEditorAssistant contributors"));
+    assert!(notices.contains("third-party"));
+    assert!(notices.contains("Apache License"));
+    assert!(!notices.contains(env!("CARGO_MANIFEST_DIR")));
+}
+
+#[test]
 fn batch_relative_paths_unicode_stdout_and_overwrite() {
     let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
     let directory = tempfile::tempdir_in(root.join("target")).unwrap();

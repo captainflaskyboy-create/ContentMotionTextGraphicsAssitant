@@ -118,12 +118,16 @@ fn execute(cancel: &Arc<AtomicBool>) -> Result<Value> {
         "help" | "--help" | "-h" | "capabilities" => {
             options(rest, &[])?;
             Ok(
-                json!({"ok":true,"name":"ContentMotionTextGraphicsAssitant","version":env!("CARGO_PKG_VERSION"),"scene_version":1,"presets":presets::NAMES,"commands":["doctor","capabilities","schema","preset --name rules","validate --request scene.json","render --request scene.json --output video.mp4 [--overwrite] [--acceleration auto|software]","text --text TITLE --preset impact --duration 3 --output title.mp4","batch --request jobs.json [--overwrite]","frame --request scene.json --time 1 --output frame.png"],"examples":["cmtga render --request examples/challenge-rules.json --output challenge-rules.mp4","cmtga text --text CHALLENGE --preset impact --duration 3 --output title.mp4"],"schema_command":"cmtga schema","layer_types":["text","rectangle","line","image","counter","progress"]}),
+                json!({"ok":true,"name":"ContentMotionTextGraphicsAssitant","version":env!("CARGO_PKG_VERSION"),"scene_version":1,"presets":presets::NAMES,"commands":["doctor","capabilities","licenses","schema","preset --name rules","validate --request scene.json","render --request scene.json --output video.mp4 [--overwrite] [--acceleration auto|software]","text --text TITLE --preset impact --duration 3 --output title.mp4","batch --request jobs.json [--overwrite]","frame --request scene.json --time 1 --output frame.png"],"examples":["cmtga render --request examples/challenge-rules.json --output challenge-rules.mp4","cmtga text --text CHALLENGE --preset impact --duration 3 --output title.mp4"],"schema_command":"cmtga schema","layer_types":["text","rectangle","line","image","counter","progress"]}),
             )
         }
         "--version" => {
             options(rest, &[])?;
             Ok(json!({"ok":true,"version":env!("CARGO_PKG_VERSION")}))
+        }
+        "licenses" => {
+            options(rest, &[])?;
+            Ok(json!({"ok":true,"licenses":include_str!(concat!(env!("OUT_DIR"),"/licenses.txt"))}))
         }
         "schema" => {
             options(rest, &[])?;
