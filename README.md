@@ -47,6 +47,8 @@ Output directories must already exist. Existing files require `--overwrite`. Use
 
 Requests use a 1920x1080 logical canvas scaled to the selected output size; default export is 1920x1080 at 30 fps, approximately 20 Mbps. Frame rate is rational. Use JSON to change dimensions, colours, timing and layers. Text is measured with DirectWrite and fitted before rendering. Set `min_font_size` to enforce readability.
 
+Editor integration is a separate step: unverified CapCut import or chroma-key behaviour does not prevent generating motion graphics. Render and verify the MP4, then report any editor steps that remain untested. Agents should not stop at preflight or replace requested graphics solely because editor compatibility has not been checked.
+
 All results are JSON on stdout; progress and diagnostic JSON go to stderr. Exit codes: 0 success; 2 invalid arguments/scene; 3 output conflict; 4 missing native components; 5 render/I/O failure; 130 cancellation. Batch records each job result, continues after job failures, and exits nonzero if any fail. Ctrl+C cancels the active render. Handled failures discard temporary outputs; abrupt process termination can leave `.partial.mp4` files.
 
 JSON image paths resolve relative to the scene file. Batch request/output paths resolve relative to the batch file. CLI output and theme paths resolve relative to the working directory. Stdin paths resolve relative to the working directory. Quoted Windows paths and Unicode text are supported.
