@@ -1,6 +1,6 @@
 # Rust dependency licences
 
-Generated from Cargo.lock and package metadata. No fonts are redistributed.
+Generated from Cargo.lock and package metadata. The embedded Press Start 2P font is separately covered by its OFL notice in THIRD_PARTY_NOTICES.md and third-party/press-start-2p/OFL.txt.
 
 | Package | Version | Licence |
 |---|---|---|

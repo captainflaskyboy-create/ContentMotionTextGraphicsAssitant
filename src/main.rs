@@ -2,15 +2,20 @@
 mod compositor;
 mod encoder;
 mod error;
+mod fonts;
 mod graphics;
+mod kinetic;
 mod layout;
 mod media;
 mod output;
+mod pixel_text;
 mod presets;
 mod render;
+mod request;
 mod scene;
 mod timing;
 use error::{Error, Result};
+use request::{Prepared, Request};
 use serde_json::{json, Value};
 use std::{
     collections::BTreeMap,
@@ -89,12 +94,22 @@ fn resolve_scene(value: Value, base: &Path) -> Result<scene::Scene> {
     }
     Ok(s)
 }
-fn load(path: &str) -> Result<scene::Scene> {
+fn load(path: &str) -> Result<Request> {
     let (v, base) = read_json(path)?;
-    resolve_scene(v, &base)
+    if v.get("kind").is_some() {
+        Ok(Request::Kinetic(serde_json::from_value(v)?))
+    } else {
+        Ok(Request::Scene(resolve_scene(v, &base)?))
+    }
 }
-fn apply_theme(s: &mut scene::Scene, o: &BTreeMap<String, String>) -> Result<()> {
+fn apply_theme(request: &mut Request, o: &BTreeMap<String, String>) -> Result<()> {
     if let Some(path) = o.get("theme") {
+        let Request::Scene(s) = request else {
+            return Err(Error::new(
+                "invalid_arguments",
+                "Kinetic requests use style/canvas settings; --theme applies to layer scenes",
+            ));
+        };
         let (value, _) = read_json(path)?;
         s.theme = serde_json::from_value(value)?;
     }
@@ -118,7 +133,7 @@ fn execute(cancel: &Arc<AtomicBool>) -> Result<Value> {
         "help" | "--help" | "-h" | "capabilities" => {
             options(rest, &[])?;
             Ok(
-                json!({"ok":true,"name":"ContentMotionTextGraphicsAssitant","version":env!("CARGO_PKG_VERSION"),"scene_version":1,"presets":presets::NAMES,"commands":["doctor","capabilities","licenses","schema","preset --name rules","validate --request scene.json","render --request scene.json --output video.mp4 [--overwrite] [--acceleration auto|software]","text --text TITLE --preset impact --duration 3 --output title.mp4","batch --request jobs.json [--overwrite]","frame --request scene.json --time 1 --output frame.png"],"examples":["cmtga render --request examples/challenge-rules.json --output challenge-rules.mp4","cmtga text --text CHALLENGE --preset impact --duration 3 --output title.mp4"],"schema_command":"cmtga schema","layer_types":["text","rectangle","line","image","counter","progress"]}),
+                json!({"ok":true,"name":"ContentMotionTextGraphicsAssitant","version":env!("CARGO_PKG_VERSION"),"scene_version":1,"kinetic_version":1,"request_kinds":["scene","kinetic"],"schema_commands":{"scene":"cmtga schema","kinetic":"cmtga schema --kind kinetic"},"kinetic_defaults":{"fps":60,"background":"#121212","color":"#FFCC00","font":"Press Start 2P","gap_mode":"hold"},"presets":presets::NAMES,"commands":["doctor","capabilities","licenses","schema [--kind scene|kinetic]","kinetic --request words.json --output kinetic.mp4","preset --name rules","validate --request scene.json","render --request scene.json --output video.mp4 [--overwrite] [--acceleration auto|software]","text --text TITLE --preset impact --duration 3 --output title.mp4","batch --request jobs.json [--overwrite]","frame --request scene.json --time 1 --output frame.png"],"examples":["cmtga render --request examples/challenge-rules.json --output challenge-rules.mp4","cmtga text --text CHALLENGE --preset impact --duration 3 --output title.mp4","cmtga kinetic --request examples/kinetic-typography.json --output kinetic.mp4"],"schema_command":"cmtga schema","layer_types":["text","rectangle","line","image","counter","progress"]}),
             )
         }
         "--version" => {
@@ -130,8 +145,17 @@ fn execute(cancel: &Arc<AtomicBool>) -> Result<Value> {
             Ok(json!({"ok":true,"licenses":include_str!(concat!(env!("OUT_DIR"),"/licenses.txt"))}))
         }
         "schema" => {
-            options(rest, &[])?;
-            Ok(serde_json::to_value(schemars::schema_for!(scene::Scene))?)
+            let o = options(rest, &["kind"])?;
+            match o.get("kind").map(String::as_str).unwrap_or("scene") {
+                "scene" => Ok(serde_json::to_value(schemars::schema_for!(scene::Scene))?),
+                "kinetic" => Ok(serde_json::to_value(schemars::schema_for!(
+                    kinetic::KineticRequest
+                ))?),
+                _ => Err(Error::new(
+                    "invalid_arguments",
+                    "--kind must be scene or kinetic",
+                )),
+            }
         }
         "doctor" => {
             options(rest, &[])?;
@@ -155,10 +179,10 @@ fn execute(cancel: &Arc<AtomicBool>) -> Result<Value> {
             let o = options(rest, &["request", "theme"])?;
             let mut s = load(required(&o, "request")?)?;
             apply_theme(&mut s, &o)?;
-            render::validate(&s)
+            render::validate_request(&s)
         }
-        "render" | "text" => {
-            let allowed = if command == "render" {
+        "render" | "text" | "kinetic" => {
+            let allowed = if command != "text" {
                 vec!["request", "output", "overwrite", "acceleration", "theme"]
             } else {
                 vec![
@@ -172,27 +196,35 @@ fn execute(cancel: &Arc<AtomicBool>) -> Result<Value> {
                 ]
             };
             let o = options(rest, &allowed)?;
-            let mut s = if command == "render" {
+            let mut s = if command != "text" {
                 load(required(&o, "request")?)?
             } else {
                 let duration = o
                     .get("duration")
                     .map_or(Ok(3.), |s| s.parse::<f64>())
                     .map_err(|_| Error::new("invalid_arguments", "Invalid duration"))?;
-                presets::make(
+                Request::Scene(presets::make(
                     o.get("preset").map(String::as_str).unwrap_or("impact"),
                     required(&o, "text")?,
                     duration,
-                )?
+                )?)
             };
+            if command == "kinetic" && !matches!(&s, Request::Kinetic(_)) {
+                return Err(Error::new(
+                    "invalid_scene",
+                    "kinetic command requires a kind: kinetic request",
+                ));
+            }
             apply_theme(&mut s, &o)?;
             if command == "text" && o.contains_key("theme") {
-                for layer in &mut s.layers {
-                    layer.motion.entrance = s.theme.entrance.min(layer.duration / 2.);
-                    layer.motion.exit = s.theme.exit.min(layer.duration / 2.);
+                if let Request::Scene(scene) = &mut s {
+                    for layer in &mut scene.layers {
+                        layer.motion.entrance = scene.theme.entrance.min(layer.duration / 2.);
+                        layer.motion.exit = scene.theme.exit.min(layer.duration / 2.);
+                    }
                 }
             }
-            render::render(
+            render::render_request(
                 &s,
                 Path::new(required(&o, "output")?),
                 o.contains_key("overwrite"),
@@ -204,10 +236,11 @@ fn execute(cancel: &Arc<AtomicBool>) -> Result<Value> {
             let o = options(rest, &["request", "time", "output", "overwrite"])?;
             let s = load(required(&o, "request")?)?;
             s.validate()?;
+            let settings = s.settings();
             let time = required(&o, "time")?
                 .parse::<f64>()
                 .map_err(|_| Error::new("invalid_arguments", "Invalid time"))?;
-            if !time.is_finite() || time < 0. || time >= s.duration {
+            if !time.is_finite() || time < 0. || time >= settings.duration {
                 return Err(Error::new(
                     "invalid_arguments",
                     "Frame time must lie inside scene",
@@ -219,14 +252,20 @@ fn execute(cancel: &Arc<AtomicBool>) -> Result<Value> {
             }
             let _runtime = media::Runtime::new()?;
             let g = graphics::Graphics::new(true)?;
-            let mut c = compositor::Compositor::new(&g, &s)?;
+            let mut c = Prepared::new(&g, &s)?;
             c.draw(
                 &g,
                 &s,
-                (time * s.canvas.fps.numerator as f64 / s.canvas.fps.denominator as f64).floor()
-                    as u64,
+                (time * settings.canvas.fps.numerator as f64
+                    / settings.canvas.fps.denominator as f64)
+                    .floor() as u64,
             )?;
-            graphics::save_png(output, s.canvas.width, s.canvas.height, c.pixels(&g)?)?;
+            graphics::save_png(
+                output,
+                settings.canvas.width,
+                settings.canvas.height,
+                c.pixels(&g)?,
+            )?;
             Ok(json!({"ok":true,"output":output,"time":time}))
         }
         "batch" => {
@@ -278,7 +317,7 @@ fn execute(cancel: &Arc<AtomicBool>) -> Result<Value> {
             let mut results = Vec::new();
             for (s, output) in jobs {
                 media::check_cancel(cancel)?;
-                match render::render(
+                match render::render_request(
                     &s,
                     &output,
                     o.contains_key("overwrite"),
@@ -325,5 +364,7 @@ fn main() {
     }
 }
 
+#[cfg(test)]
+mod kinetic_tests;
 #[cfg(test)]
 mod tests;

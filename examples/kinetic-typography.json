@@ -1,0 +1,19 @@
+{
+  "kind": "kinetic",
+  "version": 1,
+  "gap_mode": "hold",
+  "words": [
+    { "word": "I", "start": 0.2, "end": 0.45 },
+    { "word": "made", "start": 0.5, "end": 0.78 },
+    { "word": "this", "start": 0.82, "end": 1.08 },
+    { "word": "from", "start": 1.12, "end": 1.4 },
+    { "word": "scratch", "start": 1.55, "end": 2.25, "emphasis": true },
+    { "word": "by", "start": 2.5, "end": 2.8 },
+    { "word": "hand", "start": 3.0, "end": 3.5, "emphasis": true },
+    { "word": "no", "start": 3.85, "end": 4.1 },
+    { "word": "no", "start": 4.2, "end": 4.5 },
+    { "word": "shortcuts", "start": 4.75, "end": 5.35 },
+    { "word": "determination", "start": 5.7, "end": 6.35 },
+    { "word": "wins.", "start": 6.6, "end": 7.6, "emphasis": true }
+  ]
+}

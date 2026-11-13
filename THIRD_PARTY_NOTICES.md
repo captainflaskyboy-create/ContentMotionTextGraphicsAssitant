@@ -1,5 +1,9 @@
 # Third-party notices
 
+The unmodified Press Start 2P Regular font is embedded from Google Fonts, SHA-256 `034c77f1f05ec89421e4a63f0e3a4ca1ecf852cc6d2bf611f126f275728e017d`.
+Source: https://github.com/google/fonts/tree/main/ofl/pressstart2p
+Copyright and SIL Open Font License: `third-party/press-start-2p/OFL.txt`, also embedded in `cmtga licenses`. The font retains its OFL licence; the Rust project remains MIT.
+
 Native device setup, Media Foundation helpers and tracked sample recycling are adapted from ContentEditorAssitant.
 https://github.com/captainflaskyboy-create/ContentEditorAssitant
 
@@ -25,4 +29,4 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Other dependencies and their licences are listed in Cargo.lock and docs/dependencies.md. No fonts are redistributed.
+Other dependencies and their licences are listed in Cargo.lock and docs/dependencies.md. The bundled font retains its separate OFL licence above.

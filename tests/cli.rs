@@ -15,7 +15,62 @@ fn standalone_licenses_are_embedded() {
     assert!(notices.contains("AIContentEditorAssistant contributors"));
     assert!(notices.contains("third-party"));
     assert!(notices.contains("Apache License"));
+    assert!(notices.contains("Press Start 2P"));
     assert!(!notices.contains(env!("CARGO_MANIFEST_DIR")));
+}
+
+#[test]
+fn kinetic_cli_schema_frame_and_mixed_batch() {
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+    let dir = tempfile::tempdir_in(root.join("target")).unwrap();
+    let request = dir.path().join("kinetic.json");
+    std::fs::write(&request,serde_json::to_vec(&json!({"kind":"kinetic","version":1,"canvas":{"width":320,"height":180},"words":[{"word":"hello","start":0.,"end":0.2},{"word":"world","start":0.25,"end":0.5,"emphasis":true}]})).unwrap()).unwrap();
+    let executable = env!("CARGO_BIN_EXE_cmtga");
+    let schema = Command::new(executable)
+        .args(["schema", "--kind", "kinetic"])
+        .output()
+        .unwrap();
+    assert!(schema.status.success());
+    let schema: Value = serde_json::from_slice(&schema.stdout).unwrap();
+    assert!(schema["properties"]["words"].is_object());
+    for command in ["validate", "kinetic", "render", "frame"] {
+        let mut process = Command::new(executable);
+        process.args([command, "--request"]).arg(&request);
+        if command != "validate" {
+            process.arg("--output").arg(dir.path().join(format!(
+                "{command}.{}",
+                if command == "frame" { "png" } else { "mp4" }
+            )));
+        }
+        if matches!(command, "kinetic" | "render") {
+            process.args(["--acceleration", "software"]);
+        }
+        if command == "frame" {
+            process.args(["--time", "0.3"]);
+        }
+        let result = process.output().unwrap();
+        let value: Value = serde_json::from_slice(&result.stdout).unwrap();
+        assert!(result.status.success(), "{command}: {value}");
+        if matches!(command, "kinetic" | "render") {
+            assert_eq!(value["verification"]["frames"], 30);
+            assert_eq!(value["kinetic"]["font_source"], "embedded");
+        }
+    }
+    let scene = dir.path().join("scene.json");
+    std::fs::write(&scene,serde_json::to_vec(&json!({"version":1,"duration":0.5,"canvas":{"width":320,"height":180},"layers":[{"id":"box","start":0,"duration":0.5,"x":10,"y":10,"width":100,"height":100,"content":{"type":"rectangle","color":"yellow"}}]})).unwrap()).unwrap();
+    let batch = dir.path().join("batch.json");
+    std::fs::write(&batch,serde_json::to_vec(&json!({"version":1,"jobs":[{"request":"scene.json","output":"scene.mp4"},{"request":"kinetic.json","output":"words.mp4"}]})).unwrap()).unwrap();
+    let result = Command::new(executable)
+        .args(["batch", "--request"])
+        .arg(batch)
+        .args(["--acceleration", "software"])
+        .output()
+        .unwrap();
+    assert!(
+        result.status.success(),
+        "{}",
+        String::from_utf8_lossy(&result.stdout)
+    );
 }
 
 #[test]

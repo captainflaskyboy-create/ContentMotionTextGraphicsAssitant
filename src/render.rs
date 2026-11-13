@@ -1,11 +1,10 @@
 use crate::{
-    compositor::Compositor,
     encoder::{Encoder, SurfacePool},
     error::{Error, Result},
     graphics::Graphics,
     media,
     output::StagedOutput,
-    scene::Scene,
+    request::{Prepared, Request},
 };
 use serde_json::{json, Value};
 use std::{
@@ -14,18 +13,35 @@ use std::{
     time::Instant,
 };
 
-pub fn validate(s: &Scene) -> Result<Value> {
-    let mut warnings = s.validate()?;
+pub fn validate_request(request: &Request) -> Result<Value> {
+    let mut warnings = request.validate()?;
+    let s = request.settings();
     let _runtime = media::Runtime::new()?;
     let g = Graphics::new(true)?;
-    let c = Compositor::new(&g, s)?;
-    warnings.extend(c.warnings);
-    Ok(
-        json!({"ok":true,"valid":true,"frames":s.frames(),"duration":s.canvas.fps.seconds(s.frames()),"layouts":c.layouts,"warnings":warnings}),
+    let c = Prepared::new(&g, request)?;
+    warnings.extend(c.warnings());
+    let mut value = c.report();
+    value.as_object_mut().unwrap().extend(json!({"ok":true,"valid":true,"frames":s.frames(),"duration":s.canvas.fps.seconds(s.frames()),"warnings":warnings}).as_object().unwrap().clone());
+    Ok(value)
+}
+#[cfg(test)]
+pub fn render(
+    s: &crate::scene::Scene,
+    output: &Path,
+    overwrite: bool,
+    software: bool,
+    cancel: &Arc<AtomicBool>,
+) -> Result<Value> {
+    render_request(
+        &Request::Scene(s.clone()),
+        output,
+        overwrite,
+        software,
+        cancel,
     )
 }
-pub fn render(
-    s: &Scene,
+pub fn render_request(
+    request: &Request,
     output: &Path,
     overwrite: bool,
     software: bool,
@@ -33,15 +49,16 @@ pub fn render(
 ) -> Result<Value> {
     let _runtime = media::Runtime::new()?;
     let started = Instant::now();
-    let warnings = s.validate()?;
+    let warnings = request.validate()?;
+    let s = request.settings();
     let attempt = |cpu: bool| -> Result<Value> {
         media::check_cancel(cancel)?;
         let stage = StagedOutput::new(output, overwrite)?;
         let g = Graphics::new(software || cpu)?;
-        let mut c = Compositor::new(&g, s)?;
+        let mut c = Prepared::new(&g, request)?;
         let encoder = Encoder::new(
             stage.path(),
-            s,
+            &s,
             &g,
             !software && !cpu && g.hardware,
             software || cpu,
@@ -56,11 +73,11 @@ pub fn render(
         let mut last = Instant::now();
         for frame in 0..s.frames() {
             media::check_cancel(cancel)?;
-            c.draw(&g, s, frame)?;
+            c.draw(&g, request, frame)?;
             let a = s.canvas.fps.ticks(frame);
             let b = s.canvas.fps.ticks(frame + 1);
             if let Some(pool) = &pool {
-                pool.write(&g, &encoder, &c.output, a, b - a, cancel)?;
+                pool.write(&g, &encoder, c.output(), a, b - a, cancel)?;
             } else {
                 encoder.video(c.pixels(&g)?, a, b - a)?;
             }
@@ -90,12 +107,15 @@ pub fn render(
         }
         let bytes = std::fs::metadata(stage.path())?.len();
         let mut all_warnings = warnings.clone();
-        all_warnings.extend(c.warnings.clone());
+        all_warnings.extend(c.warnings());
         media::check_cancel(cancel)?;
         stage.publish(output, overwrite)?;
-        Ok(
-            json!({"ok":true,"output":output,"frames":s.frames(),"duration":s.canvas.fps.seconds(s.frames()),"width":s.canvas.width,"height":s.canvas.height,"file_bytes":bytes,"render_seconds":encode_seconds,"total_seconds":started.elapsed().as_secs_f64(),"render_fps":s.frames() as f64/encode_seconds,"peak_working_set_bytes":media::peak_memory(),"gpu_memory_bytes":null,"graphics":g.info,"encoder":encoder_info,"application_gpu_pool_size":if gpu_input{8}else{0},"warnings":all_warnings,"verification":inspection}),
-        )
+        let mut value = json!({"ok":true,"output":output,"frames":s.frames(),"duration":s.canvas.fps.seconds(s.frames()),"width":s.canvas.width,"height":s.canvas.height,"file_bytes":bytes,"render_seconds":encode_seconds,"total_seconds":started.elapsed().as_secs_f64(),"render_fps":s.frames() as f64/encode_seconds,"peak_working_set_bytes":media::peak_memory(),"gpu_memory_bytes":null,"graphics":g.info,"encoder":encoder_info,"application_gpu_pool_size":if gpu_input{8}else{0},"warnings":all_warnings,"verification":inspection});
+        value
+            .as_object_mut()
+            .unwrap()
+            .extend(c.report().as_object().unwrap().clone());
+        Ok(value)
     };
     match attempt(false) {
         Err(e) if !software && matches!(e.code, "native_failed" | "gpu_surface_failed") => {

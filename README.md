@@ -2,7 +2,19 @@
 
 Native Windows motion graphics from explicit JSON instructions. Made by **Captain Flasky Boy**. Open source under MIT. Executable: **cmtga.exe**.
 
-Create crisp titles, challenge rules, terminal panels, counters, callouts and simple flowcharts over solid green, ready for chroma keying in a video editor. No GUI, server, AI model, browser or FFmpeg runtime dependency. Silent H.264 MP4 is the default output.
+**Full-screen kinetic typography:** render speech-timed words in crisp amber pixel lettering on matte charcoal. The embedded Press Start 2P font, 80 ms pop, slow growth, emphasis and hard cuts work from one JSON request, with no font installation.
+
+```powershell
+.\cmtga.exe kinetic --request examples\kinetic-typography.json --output kinetic.mp4
+.\cmtga.exe validate --request examples\kinetic-typography.json
+.\cmtga.exe schema --kind kinetic
+```
+
+See [kinetic typography](docs/kinetic-typography.md) for timed words, settings, and frame behaviour. The example uses illustrative timings and contains no narration. Kinetic defaults are 1080p60 on `#121212`; existing layer presets keep their original defaults.
+
+![Kinetic pixel typography on matte charcoal](docs/kinetic-demo.png)
+
+Create crisp titles, challenge rules, terminal panels, counters, callouts and simple flowcharts over solid green, or full-screen kinetic words on matte charcoal. No GUI, server, AI model, browser or FFmpeg runtime dependency. Output is silent H.264 MP4.
 
 [Download Windows builds](https://github.com/captainflaskyboy-create/ContentMotionTextGraphicsAssitant/releases/latest) · [Finished challenge demo](https://github.com/captainflaskyboy-create/ContentMotionTextGraphicsAssitant/releases/download/v0.1.0/challenge-rules.mp4).
 
@@ -45,7 +57,7 @@ Output directories must already exist. Existing files require `--overwrite`. Use
 
 `doctor` reports native graphics and registered H.264 encoders; registration alone does not establish that a particular scene can encode. `capabilities` lists supported commands and presets. `schema` prints the JSON Schema. `preset --name impact --text "YOUR TITLE" --duration 3` prints a reusable scene. `--request -` reads JSON from stdin.
 
-Requests use a 1920x1080 logical canvas scaled to the selected output size; default export is 1920x1080 at 30 fps, approximately 20 Mbps. Frame rate is rational. Use JSON to change dimensions, colours, timing and layers. Text is measured with DirectWrite and fitted before rendering. Set `min_font_size` to enforce readability.
+Layer scenes use a 1920x1080 logical canvas scaled to the selected output size; their default export is 1920x1080 at 30 fps, approximately 20 Mbps. Kinetic requests default to 60 fps. Frame rate is rational. Use JSON to change dimensions, colours and timing. Text is measured with DirectWrite and fitted before rendering. Set `min_font_size` to enforce readability.
 
 Editor integration is a separate step: unverified CapCut import or chroma-key behaviour does not prevent generating motion graphics. Render and verify the MP4, then report any editor steps that remain untested. Agents should not stop at preflight or replace requested graphics solely because editor compatibility has not been checked.
 
@@ -53,7 +65,7 @@ All results are JSON on stdout; progress and diagnostic JSON go to stderr. Exit 
 
 JSON image paths resolve relative to the scene file. Batch request/output paths resolve relative to the batch file. CLI output and theme paths resolve relative to the working directory. Stdin paths resolve relative to the working directory. Quoted Windows paths and Unicode text are supported.
 
-Default fonts are Arial Black, Segoe UI and Consolas. Missing fonts fall back to Segoe UI, then Arial, with warnings. Fonts are not bundled. The Captain Flasky Boy palette is configurable and is not claimed to be an exact brand specification. Avoid green foreground colours; H.264 chroma subsampling can soften coloured edges, so use strong dark outlines and readable sizes.
+Default layer-scene fonts are Arial Black, Segoe UI and Consolas. Missing fonts fall back to Segoe UI, then Arial, with warnings. Kinetic typography uses the embedded Press Start 2P font. The Captain Flasky Boy palette is configurable and is not claimed to be an exact brand specification. Avoid green foreground colours in green-screen scenes; H.264 chroma subsampling can soften coloured edges, so use readable sizes.
 
 ## Development
 

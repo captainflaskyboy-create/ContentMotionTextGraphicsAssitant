@@ -1,0 +1,260 @@
+{
+  "$defs": {
+    "FrameRate": {
+      "additionalProperties": false,
+      "properties": {
+        "denominator": {
+          "default": 1,
+          "format": "uint32",
+          "maximum": 10000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "numerator": {
+          "default": 30,
+          "format": "uint32",
+          "maximum": 120000,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "GapMode": {
+      "enum": [
+        "hold",
+        "blank"
+      ],
+      "type": "string"
+    },
+    "KineticCanvas": {
+      "additionalProperties": false,
+      "properties": {
+        "background": {
+          "default": "#121212",
+          "type": "string"
+        },
+        "bitrate_kbps": {
+          "default": 20000,
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "fps": {
+          "$ref": "#/$defs/FrameRate",
+          "default": {
+            "denominator": 1,
+            "numerator": 60
+          }
+        },
+        "height": {
+          "default": 1080,
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "width": {
+          "default": 1920,
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "KineticKind": {
+      "enum": [
+        "kinetic"
+      ],
+      "type": "string"
+    },
+    "KineticStyle": {
+      "additionalProperties": false,
+      "properties": {
+        "color": {
+          "default": "#FFCC00",
+          "type": "string"
+        },
+        "emphasis_scale": {
+          "default": 1.2000000476837158,
+          "format": "float",
+          "type": "number"
+        },
+        "font_size": {
+          "default": 160.0,
+          "format": "float",
+          "type": "number"
+        },
+        "hold_scale": {
+          "default": 1.0399999618530273,
+          "format": "float",
+          "type": "number"
+        },
+        "initial_scale": {
+          "default": 0.8500000238418579,
+          "format": "float",
+          "type": "number"
+        },
+        "margin": {
+          "default": 96.0,
+          "format": "float",
+          "type": "number"
+        },
+        "min_font_size": {
+          "default": 64.0,
+          "format": "float",
+          "type": "number"
+        },
+        "peak_scale": {
+          "default": 1.0399999618530273,
+          "format": "float",
+          "type": "number"
+        },
+        "pop_ms": {
+          "default": 80.0,
+          "format": "double",
+          "type": "number"
+        },
+        "settle_scale": {
+          "default": 1.0,
+          "format": "float",
+          "type": "number"
+        },
+        "shadow": {
+          "$ref": "#/$defs/Shadow",
+          "default": {
+            "blur_radius": 16.0,
+            "color": "#000000",
+            "offset_x": 0.0,
+            "offset_y": 6.0,
+            "opacity": 0.800000011920929
+          }
+        }
+      },
+      "type": "object"
+    },
+    "Shadow": {
+      "additionalProperties": false,
+      "properties": {
+        "blur_radius": {
+          "default": 16.0,
+          "format": "float",
+          "type": "number"
+        },
+        "color": {
+          "default": "#000000",
+          "type": "string"
+        },
+        "offset_x": {
+          "default": 0.0,
+          "format": "float",
+          "type": "number"
+        },
+        "offset_y": {
+          "default": 6.0,
+          "format": "float",
+          "type": "number"
+        },
+        "opacity": {
+          "default": 0.800000011920929,
+          "format": "float",
+          "type": "number"
+        }
+      },
+      "type": "object"
+    },
+    "Word": {
+      "additionalProperties": false,
+      "properties": {
+        "emphasis": {
+          "default": false,
+          "type": "boolean"
+        },
+        "end": {
+          "format": "double",
+          "type": "number"
+        },
+        "start": {
+          "format": "double",
+          "type": "number"
+        },
+        "word": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "word",
+        "start",
+        "end"
+      ],
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "canvas": {
+      "$ref": "#/$defs/KineticCanvas",
+      "default": {
+        "background": "#121212",
+        "bitrate_kbps": 20000,
+        "fps": {
+          "denominator": 1,
+          "numerator": 60
+        },
+        "height": 1080,
+        "width": 1920
+      }
+    },
+    "gap_mode": {
+      "$ref": "#/$defs/GapMode",
+      "default": "hold"
+    },
+    "kind": {
+      "$ref": "#/$defs/KineticKind"
+    },
+    "style": {
+      "$ref": "#/$defs/KineticStyle",
+      "default": {
+        "color": "#FFCC00",
+        "emphasis_scale": 1.2000000476837158,
+        "font_size": 160.0,
+        "hold_scale": 1.0399999618530273,
+        "initial_scale": 0.8500000238418579,
+        "margin": 96.0,
+        "min_font_size": 64.0,
+        "peak_scale": 1.0399999618530273,
+        "pop_ms": 80.0,
+        "settle_scale": 1.0,
+        "shadow": {
+          "blur_radius": 16.0,
+          "color": "#000000",
+          "offset_x": 0.0,
+          "offset_y": 6.0,
+          "opacity": 0.800000011920929
+        }
+      }
+    },
+    "version": {
+      "format": "uint32",
+      "maximum": 1,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "words": {
+      "items": {
+        "$ref": "#/$defs/Word"
+      },
+      "maxItems": 10000,
+      "minItems": 1,
+      "type": "array"
+    }
+  },
+  "required": [
+    "kind",
+    "version",
+    "words"
+  ],
+  "title": "KineticRequest",
+  "type": "object"
+}

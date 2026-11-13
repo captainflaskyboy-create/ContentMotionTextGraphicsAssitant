@@ -10,4 +10,6 @@ Unknown editor or CapCut chroma-key compatibility must not block scene generatio
 
 First milestone is the actual challenge-rules render; verify it before adding presets. Use Direct2D/DirectWrite/D3D11 and Media Foundation H.264 MP4. Default 1080p30 solid green. Keep effects off the background. Fonts and branding colours are configurable. Missing fonts must be reported.
 
+Kinetic requests use the dedicated timed-word workflow described in docs/kinetic-typography.md: embedded Press Start 2P, matte charcoal, amber lettering, 1080p60, hard cuts and explicit timestamps. Preserve existing layer-scene defaults. No transcription or narration embedding. Label illustrative timings honestly. Keep glyph pixels sharp and filter shadows separately.
+
 Before release: cargo fmt --check; cargo clippy --all-targets -- -D warnings; cargo test. Generate schema with cmtga schema. Run Windows native smoke tests, inspect decoded frames, benchmark wall time and memory. Document exactly what ran; never claim untested playback or editor import. Read README and docs/agent-guide.md for workflow.

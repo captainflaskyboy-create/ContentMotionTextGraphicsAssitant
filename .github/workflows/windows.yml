@@ -26,3 +26,5 @@ jobs:
             dist/*.zip
             dist/SHA256SUMS.txt
             test-output/challenge-rules.mp4
+            test-output/kinetic-auto.mp4
+            test-output/kinetic-frame.png

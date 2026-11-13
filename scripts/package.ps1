@@ -10,6 +10,8 @@ try {
     foreach ($item in @('README.md','LICENSE','THIRD_PARTY_NOTICES.md','third-party','docs','examples','themes')) { Copy-Item -LiteralPath $item -Destination $package -Recurse -Force }
     & (Join-Path $package 'cmtga.exe') doctor
     if ($LASTEXITCODE -ne 0) { throw 'Packaged executable doctor failed' }
+    $licences = & (Join-Path $package 'cmtga.exe') licenses | ConvertFrom-Json
+    if ($LASTEXITCODE -ne 0 -or $licences.licenses -notmatch 'Press Start 2P') { throw 'Embedded font licence missing' }
     Compress-Archive -Path "$package/*" -DestinationPath dist/cmtga-windows-x64.zip -Force
     $hash = Get-FileHash -LiteralPath dist/cmtga-windows-x64.zip -Algorithm SHA256
     $executableHash = Get-FileHash -LiteralPath dist/cmtga.exe -Algorithm SHA256

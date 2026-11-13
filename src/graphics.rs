@@ -88,6 +88,23 @@ impl Graphics {
         }
     }
     pub fn bitmap(&self, w: u32, h: u32, flags: D2D1_BITMAP_OPTIONS) -> Result<ID2D1Bitmap1> {
+        self.bitmap_alpha(w, h, flags, D2D1_ALPHA_MODE_IGNORE)
+    }
+    pub fn transparent_bitmap(
+        &self,
+        w: u32,
+        h: u32,
+        flags: D2D1_BITMAP_OPTIONS,
+    ) -> Result<ID2D1Bitmap1> {
+        self.bitmap_alpha(w, h, flags, D2D1_ALPHA_MODE_PREMULTIPLIED)
+    }
+    fn bitmap_alpha(
+        &self,
+        w: u32,
+        h: u32,
+        flags: D2D1_BITMAP_OPTIONS,
+        alpha: D2D1_ALPHA_MODE,
+    ) -> Result<ID2D1Bitmap1> {
         unsafe {
             Ok(self.context.CreateBitmap(
                 D2D_SIZE_U {
@@ -99,7 +116,7 @@ impl Graphics {
                 &D2D1_BITMAP_PROPERTIES1 {
                     pixelFormat: D2D1_PIXEL_FORMAT {
                         format: DXGI_FORMAT_B8G8R8A8_UNORM,
-                        alphaMode: D2D1_ALPHA_MODE_IGNORE,
+                        alphaMode: alpha,
                     },
                     dpiX: 96.0,
                     dpiY: 96.0,

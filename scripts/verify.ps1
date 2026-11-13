@@ -17,4 +17,12 @@ try {
         & $Binary frame --request examples/challenge-rules.json --time $time --output "test-output/frame-$time.png" --overwrite
         if ($LASTEXITCODE -ne 0) { throw 'Frame verification failed' }
     }
+    & $Binary validate --request examples/kinetic-typography.json
+    if ($LASTEXITCODE -ne 0) { throw 'Kinetic validation failed' }
+    foreach ($mode in @('software','auto')) {
+        & $Binary kinetic --request examples/kinetic-typography.json --output "test-output/kinetic-$mode.mp4" --overwrite --acceleration $mode
+        if ($LASTEXITCODE -ne 0) { throw "Kinetic $mode render failed" }
+    }
+    & $Binary frame --request examples/kinetic-typography.json --time 1.6 --output test-output/kinetic-frame.png --overwrite
+    if ($LASTEXITCODE -ne 0) { throw 'Kinetic frame failed' }
 } finally { Pop-Location }
