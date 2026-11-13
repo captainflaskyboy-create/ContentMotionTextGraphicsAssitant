@@ -40,7 +40,7 @@ cargo build --release --locked
 
 Copy `cmtga.exe` wherever you keep portable tools and invoke its full path. The tool does not change PATH. MSVC is the recommended release target; an existing Rust GNU toolchain with MinGW-w64 also works.
 
-For a distributable build, run `scripts/build.ps1` to remove workstation-specific paths embedded by dependencies before packaging.
+For a distributable build, run `scripts/build.ps1` to remove workstation-specific paths embedded by dependencies before packaging. MSVC releases built by this script also link the C runtime statically so no Visual C++ runtime installation is required.
 
 ## Usage
 
